@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::prefix('admin')->name('admin.')->middleware('guest:api')->controller(AdminAuthController::class)->group(function () {
+Route::prefix('admin')->name('admin.')->controller(AdminAuthController::class)->group(function () {
     Route::post('/login', 'login')->name('login');
     Route::post('/register', 'register')->name('register');
+});
+
+Route::apiResource('/item', ItemController::class)->middleware('auth:api')->missing(function () {
+    return response()->json([
+        'error' => 'not found.'
+    ]);
 });
