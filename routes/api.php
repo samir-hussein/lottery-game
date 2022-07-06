@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PlayerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,3 +32,5 @@ Route::apiResource('/item', ItemController::class)->middleware('auth:api')->miss
         'error' => 'not found.'
     ]);
 });
+
+Route::post('/player/register', [PlayerController::class, 'register'])->name('player.register');
