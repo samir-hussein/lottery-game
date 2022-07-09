@@ -5,11 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Box extends Model
+class BoxItemList extends Model
 {
     use HasFactory;
-
-    protected $table = 'boxs';
 
     /**
      * The attributes that are mass assignable.
@@ -17,14 +15,12 @@ class Box extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'player_id',
-        'admin_id',
-        'price',
-        'paid',
+        'box_id',
+        'item_id'
     ];
 
-    public function items()
+    public function item()
     {
-        return $this->hasMany(BoxItemList::class);
+        return $this->belongsTo(Item::class);
     }
 }

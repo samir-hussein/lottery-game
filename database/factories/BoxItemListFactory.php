@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ItemFactory extends Factory
+class BoxItemListFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -14,9 +14,7 @@ class ItemFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->text(10),
-            'description' => $this->faker->text(),
-            'price' => $this->faker->randomFloat(3, 0, 1),
+            //
         ];
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AdminAuthController;
+use App\Http\Controllers\BoxController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Http\Request;
@@ -34,3 +35,8 @@ Route::apiResource('/item', ItemController::class)->middleware('auth:api')->miss
 });
 
 Route::post('/player/register', [PlayerController::class, 'register'])->name('player.register');
+
+Route::controller(BoxController::class)->name('box.')->prefix('box')->middleware('auth:api')->group(function () {
+    Route::post('/', 'store')->name('store');
+    Route::get('/', 'index')->name('index');
+});
