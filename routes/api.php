@@ -54,6 +54,6 @@ Route::get('/test', function () {
     $payment = new PaymentCotroller('F97SNVD-VVMMBHP-KM6E30M-H4GNSA5');
 
     return response()->json([
-        'data' => $payment->getPaymentStatus('4391940122'),
+        'data' => $payment->getPaymentStatus('4650757014'),
     ]);
 });
