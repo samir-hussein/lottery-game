@@ -80,7 +80,8 @@ class BoxController extends Controller
             'price_currency' => 'usd',
             'pay_currency' => 'eth',
             'order_id' => $box->id,
-            'ipn_callback_url' => 'https://home-automation-6.herokuapp.com/api/payment-callback'
+            'ipn_callback_url' => 'https://lottery-game-v1.herokuapp.com/api/payment-callback',
+            'case' => 'success'
         ]);
 
         Payment::create([
