@@ -100,10 +100,6 @@ class BoxController extends Controller
 
     public function paymentCallback(Request $request)
     {
-        Box::where('id', $request->order_id)->update([
-            'paid' => $request->payment_status
-        ]);
-
         $recived_hmac = $request->header('x-nowpayments-sig');
 
         $params = $request->all();
