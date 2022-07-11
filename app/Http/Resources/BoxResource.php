@@ -16,7 +16,8 @@ class BoxResource extends JsonResource
     {
         return [
             'items' => BoxItemListResource::collection($this->items),
-            'price' => $this->price . "ETH",
+            'price' => $this->price . " USD",
+            'estimate_price' => $this->estimate_price . " ETH",
             'paid' => $this->paid,
         ];
     }

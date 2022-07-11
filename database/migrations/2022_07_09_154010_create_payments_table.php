@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBoxsTable extends Migration
+class CreatePaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateBoxsTable extends Migration
      */
     public function up()
     {
-        Schema::create('boxs', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('admin_id')->unsigned()->nullable();
+            $table->bigInteger('box_id')->unsigned()->nullable();
             $table->bigInteger('player_id')->unsigned()->nullable();
-            $table->string('price');
-            $table->string('estimate_price');
-            $table->string('paid')->default('no');
-            $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('payment_id');
+            $table->string('payment_status');
+            $table->string('pay_address');
+            $table->foreign('box_id')->references('id')->on('boxs')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('player_id')->references('id')->on('players')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
@@ -33,6 +33,6 @@ class CreateBoxsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('boxs');
+        Schema::dropIfExists('payments');
     }
 }

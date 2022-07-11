@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\BoxController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PaymentCotroller;
 use App\Http\Controllers\PlayerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,4 +40,20 @@ Route::post('/player/register', [PlayerController::class, 'register'])->name('pl
 Route::controller(BoxController::class)->name('box.')->prefix('box')->middleware('auth:api')->group(function () {
     Route::post('/', 'store')->name('store');
     Route::get('/', 'index')->name('index');
+});
+
+Route::post('/box/{box}/create-payment', [BoxController::class, 'createBoxPayment'])->name('box.create.payment')->missing(function () {
+    return response()->json([
+        'error' => 'not found.'
+    ]);
+});
+
+Route::post('/payment-callback', [BoxController::class, 'paymentCallback'])->name('payment.callback');
+
+Route::get('/test', function () {
+    $payment = new PaymentCotroller('F97SNVD-VVMMBHP-KM6E30M-H4GNSA5');
+
+    return response()->json([
+        'data' => $payment->getPaymentStatus('4391940122'),
+    ]);
 });
