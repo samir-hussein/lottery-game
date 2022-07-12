@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\BoxResource;
 use App\Models\Box;
 use App\Models\BoxItemList;
+use App\Models\Invoice;
 use App\Models\Item;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -43,12 +44,24 @@ class BoxController extends Controller
             'estimate_price' => $estimate_price,
         ]);
 
+        $invoice = $payment->createInvoice([
+            'price_amount' => $box->price,
+            'price_currency' => 'usd',
+            'pay_currency' => 'eth',
+            'order_id' => $box->id,
+        ]);
+
         foreach ($random_items as $item) {
             BoxItemList::create([
                 'box_id' => $box->id,
                 'item_id' => $item->id,
             ]);
         }
+
+        Invoice::create([
+            'box_id' => $box->id,
+            'invoice_id' => $invoice['id']
+        ]);
 
         return response()->json([
             'success' => 'box created successfully.'
@@ -73,6 +86,12 @@ class BoxController extends Controller
             ], 422);
         }
 
+        if ($box->paid == 'finished') {
+            return response()->json([
+                'error' => 'The box has been sold.'
+            ], 404);
+        }
+
         $payment = new PaymentCotroller('F97SNVD-VVMMBHP-KM6E30M-H4GNSA5');
 
         $payment = $payment->createPayment([
@@ -91,9 +110,12 @@ class BoxController extends Controller
             'pay_address' => $payment['pay_address']
         ]);
 
+        $invoice_id = $box->invoice->invoice_id;
+        $payment_id = $payment['payment_id'];
+
         return response()->json([
             'data' => [
-                'pay_address' => $payment['pay_address']
+                'invoice_link' => "https://sandbox.nowpayments.io/payment/?iid=$invoice_id&paymentId=$payment_id"
             ]
         ]);
     }
@@ -109,9 +131,23 @@ class BoxController extends Controller
         $hmac = hash_hmac("sha512", $sorted_request_json, trim('5cinJva4/93fR+ge6XFEA0WVyJrSOPx2'));
 
         if ($hmac == $recived_hmac) {
-            Box::where('id', $request->order_id)->update([
-                'paid' => $request->payment_status
+            $payment = Payment::where('payment_id', $request->payment_id)->first();
+
+            $payment->update([
+                'payment_status' => $request->payment_status,
             ]);
+
+            if ($request->payment_status == 'finished') {
+                $box = Box::where('id', $request->order_id)->first();
+
+                if (!$box->player_id) {
+                    $box->update([
+                        'player_id' => $payment->player_id,
+                        'paid' => $request->payment_status,
+                        'admin_id' => null
+                    ]);
+                }
+            }
         }
     }
 }

@@ -53,7 +53,10 @@ Route::post('/payment-callback', [BoxController::class, 'paymentCallback'])->nam
 Route::get('/test', function () {
     $payment = new PaymentCotroller('F97SNVD-VVMMBHP-KM6E30M-H4GNSA5');
 
+    $data = $payment->getPaymentStatus('4331064034');
+    $date = strtotime($data['created_at']);
+
     return response()->json([
-        'data' => $payment->getPaymentStatus('4650757014'),
+        'data' => (strtotime(now()) - $date) / 60,
     ]);
 });

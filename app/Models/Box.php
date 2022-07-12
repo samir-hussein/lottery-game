@@ -28,4 +28,9 @@ class Box extends Model
     {
         return $this->hasMany(BoxItemList::class);
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }
