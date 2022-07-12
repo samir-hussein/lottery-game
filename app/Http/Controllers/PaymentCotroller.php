@@ -40,19 +40,4 @@ class PaymentCotroller extends Controller
             'Content-Type' => 'application/json'
         ])->post('https://api-sandbox.nowpayments.io/v1/payment', $params)->json();
     }
-
-    public function createInvoice(array $params)
-    {
-        return Http::withHeaders([
-            'x-api-key' => $this->token,
-            'Content-Type' => 'application/json'
-        ])->post('https://api-sandbox.nowpayments.io/v1/invoice', $params)->json();
-    }
-
-    public function getPaymentStatus(string $payment_id)
-    {
-        return Http::withHeaders([
-            'x-api-key' => $this->token,
-        ])->get("https://api-sandbox.nowpayments.io/v1/payment/$payment_id")->json();
-    }
 }

@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('admin')->name('admin.')->controller(AdminAuthController::class)->group(function () {
     Route::post('/login', 'login')->name('login');
-    Route::post('/register', 'register')->name('register');
+    Route::post('/register', 'register')->name('register')->middleware('auth:api');
 });
 
 Route::apiResource('/item', ItemController::class)->middleware('auth:api')->missing(function () {
@@ -42,6 +42,10 @@ Route::controller(BoxController::class)->name('box.')->prefix('box')->middleware
     Route::get('/', 'index')->name('index');
 });
 
+Route::get('/box/unsold', [BoxController::class, 'unsoldBoxes'])->name('box.unsold');
+
+Route::get('/lottery-winner', [BoxController::class, 'lotteryWinner'])->name('lottery.winner')->middleware('auth:api');
+
 Route::post('/box/{box}/create-payment', [BoxController::class, 'createBoxPayment'])->name('box.create.payment')->missing(function () {
     return response()->json([
         'error' => 'not found.'
@@ -49,14 +53,3 @@ Route::post('/box/{box}/create-payment', [BoxController::class, 'createBoxPaymen
 });
 
 Route::post('/payment-callback', [BoxController::class, 'paymentCallback'])->name('payment.callback');
-
-Route::get('/test', function () {
-    $payment = new PaymentCotroller('F97SNVD-VVMMBHP-KM6E30M-H4GNSA5');
-
-    $data = $payment->getPaymentStatus('4331064034');
-    $date = strtotime($data['created_at']);
-
-    return response()->json([
-        'data' => (strtotime(now()) - $date) / 60,
-    ]);
-});

@@ -44,24 +44,12 @@ class BoxController extends Controller
             'estimate_price' => $estimate_price,
         ]);
 
-        $invoice = $payment->createInvoice([
-            'price_amount' => $box->price,
-            'price_currency' => 'usd',
-            'pay_currency' => 'eth',
-            'order_id' => $box->id,
-        ]);
-
         foreach ($random_items as $item) {
             BoxItemList::create([
                 'box_id' => $box->id,
                 'item_id' => $item->id,
             ]);
         }
-
-        Invoice::create([
-            'box_id' => $box->id,
-            'invoice_id' => $invoice['id']
-        ]);
 
         return response()->json([
             'success' => 'box created successfully.'
@@ -110,12 +98,9 @@ class BoxController extends Controller
             'pay_address' => $payment['pay_address']
         ]);
 
-        $invoice_id = $box->invoice->invoice_id;
-        $payment_id = $payment['payment_id'];
-
         return response()->json([
             'data' => [
-                'invoice_link' => "https://sandbox.nowpayments.io/payment/?iid=$invoice_id&paymentId=$payment_id"
+                'pay_address' => $payment['pay_address']
             ]
         ]);
     }
@@ -149,5 +134,34 @@ class BoxController extends Controller
                 }
             }
         }
+    }
+
+    public function unsoldBoxes()
+    {
+        return response()->json([
+            'data' => BoxResource::collection(Box::where('paid', 'no')->get()),
+        ]);
+    }
+
+    public function lotteryWinner()
+    {
+        $winnerBox = Box::whereNotNull('player_id')->inRandomOrder()->first();
+
+        $soldBoxesPrice = Box::where('paid', 'finished')->sum('price');
+
+        $prize = 0.1 * $soldBoxesPrice;
+
+        $winnerPlayer = $winnerBox->player;
+
+        return response()->json([
+            'data' => [
+                'prize' => $prize . " USD",
+                'player_name' => $winnerPlayer->first_name . " " . $winnerPlayer->last_name,
+                'player_phone' => $winnerPlayer->mobile_number,
+                'player_email' => $winnerPlayer->email,
+                'player_gender' => $winnerPlayer->gender,
+                'winner_box_price' => $winnerBox->price . " USD",
+            ]
+        ]);
     }
 }

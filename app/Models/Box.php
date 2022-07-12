@@ -29,8 +29,8 @@ class Box extends Model
         return $this->hasMany(BoxItemList::class);
     }
 
-    public function invoice()
+    public function player()
     {
-        return $this->hasOne(Invoice::class);
+        return $this->belongsTo(Player::class);
     }
 }

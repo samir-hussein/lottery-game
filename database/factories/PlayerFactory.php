@@ -13,8 +13,14 @@ class PlayerFactory extends Factory
      */
     public function definition()
     {
+        $gender = $this->faker->randomElement(['male', 'female']);
+
         return [
-            //
+            'first_name' => $this->faker->firstName($gender),
+            'last_name' => $this->faker->lastName(),
+            'mobile_number' => $this->faker->phoneNumber(),
+            'email' => $this->faker->unique()->email(),
+            'gender' => $gender
         ];
     }
 }
